@@ -1,3 +1,11 @@
 spring:
   main:
     web-application-type: none
+  jpa:
+    defer-datasource-initialization: true
+    database-platform: ${DATABASE_DIALECT:org.hibernate.dialect.H2Dialect}
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:mem:testdb}
+    driverClassName: ${DATABASE_DRIVER:org.h2.Driver}
+    username: ${DATABASE_USERNAME:1}
+    password: ${DATABASE_PASSOWRD:1}
