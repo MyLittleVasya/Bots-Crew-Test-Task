@@ -5,14 +5,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+/**
+ * Main bean that processes commands from console.
+ */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CommandLineController {
 
   private final CommandProcessor commandProcessor;
 
+  /**
+   * Initialize method for reading console until exit is printed.
+   *
+   * @throws IOException thrown because of console parsing error.
+   */
   public void startConsole() throws IOException {
     final var commandReader = new BufferedReader(new InputStreamReader(System.in));
     while (true) {
@@ -22,7 +32,12 @@ public class CommandLineController {
         break;
       }
       else {
-        commandProcessor.processCommand(command);
+        try {
+          commandProcessor.processCommand(command);
+        }
+        catch (RuntimeException ex) {
+          log.error(ex.getMessage());
+        }
       }
     }
   }

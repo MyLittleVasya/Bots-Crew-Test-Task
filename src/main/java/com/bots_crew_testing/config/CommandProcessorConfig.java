@@ -4,7 +4,6 @@ import com.bots_crew_testing.command.CommandBuilder;
 import com.bots_crew_testing.command.CommandProcessor;
 import com.bots_crew_testing.command.CommandProcessorBuilder;
 import com.bots_crew_testing.service.DepartmentService;
-import com.bots_crew_testing.service.TestServiceMax;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class CommandProcessorConfig {
 
   @Bean
-  public CommandProcessor getPromptProcessor(TestServiceMax testServiceMax, DepartmentService departmentService) {
+  public CommandProcessor getPromptProcessor(DepartmentService departmentService) {
     return new CommandProcessorBuilder()
         .addCommand(new CommandBuilder("who").prompt("is head of department",
             departmentService::getHeadOfDepartment).createCommand())

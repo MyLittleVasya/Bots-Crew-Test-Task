@@ -3,10 +3,16 @@ package com.bots_crew_testing.command;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Builder for creation of {@link Command}.
+ */
 public class CommandBuilder {
 
   private final String command;
 
+  /**
+   * String is prompt, CommandHandler is lambda method reference {@link CommandHandler} that will handle appropriate command.
+   */
   private Map<String, CommandHandler> prompts;
 
   public CommandBuilder(String command) {

@@ -1,5 +1,6 @@
 package com.bots_crew_testing.command;
 
+import com.bots_crew_testing.exception.ParsingException;
 import java.util.Map;
 
 public class CommandProcessorImpl implements CommandProcessor {
@@ -30,6 +31,7 @@ public class CommandProcessorImpl implements CommandProcessor {
         }
       }
     }
+    throw new ParsingException("Unknown command, list of available commands + \n" + commands.keySet());
   }
 
   private boolean validateSplittedCommand(String[] command, String originalCommand) {
@@ -39,6 +41,6 @@ public class CommandProcessorImpl implements CommandProcessor {
     else if (command.length == 2 && !command[1].equals(originalCommand)) {
       return true;
     }
-    return false;
+    throw new ParsingException("Unknown command, list of available commands + \n" + commands.keySet());
   }
 }

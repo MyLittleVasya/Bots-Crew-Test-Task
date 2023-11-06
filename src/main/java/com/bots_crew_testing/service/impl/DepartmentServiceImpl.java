@@ -5,11 +5,15 @@ import com.bots_crew_testing.entity.Department;
 import com.bots_crew_testing.entity.Lector;
 import com.bots_crew_testing.entity.repo.DepartmentRepository;
 import com.bots_crew_testing.entity.repo.LectorRepository;
+import com.bots_crew_testing.exception.NotFoundException;
 import com.bots_crew_testing.service.DepartmentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link DepartmentService}.
+ */
 @Service
 @RequiredArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
@@ -24,7 +28,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     final var department = departmentRepository.findDepartmentByName(departmentName);
 
     return department.map(dep -> String.format("Head of %s department is %s", departmentName,
-        dep.getHeadOfDepartment().getFullName())).orElseThrow(() -> new RuntimeException("Aboba not found"));
+        dep.getHeadOfDepartment().getFullName())).orElseThrow(
+        () -> new NotFoundException(String.format("Department %s not found", departmentName)));
 
   }
 
@@ -47,11 +52,12 @@ public class DepartmentServiceImpl implements DepartmentService {
           .count();
 
       return String.format("Degrees count in the %s department:\n" +
-          "Assistants - %d\n" +
-          "Associate Professors - %d\n" +
-          "Professors - %d", departmentName, assistantsCount, associateProfessorsCount, professorsCount);
+              "Assistants - %d\n" +
+              "Associate Professors - %d\n" +
+              "Professors - %d", departmentName, assistantsCount, associateProfessorsCount,
+          professorsCount);
     } else {
-      throw new RuntimeException("Department not found");
+      throw new NotFoundException(String.format("Department %s not found", departmentName));
     }
   }
 
@@ -73,7 +79,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
       return String.format("The average salary of %s is %s", departmentName, average);
     } else {
-      throw new RuntimeException("Department not found");
+      throw new NotFoundException(String.format("Department %s not found", departmentName));
     }
   }
 
@@ -86,7 +92,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
       return String.format("The count of employees is %s", dep.getEmployees().size());
     } else {
-      throw new RuntimeException("Department not found");
+      throw new NotFoundException(String.format("Department %s not found", departmentName));
     }
   }
 
