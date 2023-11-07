@@ -46,7 +46,8 @@ public class DepartmentServiceImplTest {
 
     String result = departmentService.getHeadOfDepartment(departmentName);
 
-    assertEquals("Head of TestDepartment department is HeadLector", result);
+    assertEquals("Head of \"TestDepartment\" department is \"HeadLector\"", result);
+
   }
 
   @Test
@@ -99,7 +100,7 @@ public class DepartmentServiceImplTest {
     String result = departmentService.getAverageSalary(departmentName);
 
     // Assert
-    assertEquals("The average salary of TestDepartment is 55000.0", result);
+    assertEquals("The average salary of \"TestDepartment\" is \"55000.0\"", result);
   }
 
   @Test
@@ -118,7 +119,7 @@ public class DepartmentServiceImplTest {
     String result = departmentService.getEmployeeCount(departmentName);
 
     // Assert
-    assertEquals("The count of employees is 2", result);
+    assertEquals("The count of employees is \"2\"", result);
   }
 
   @Test
