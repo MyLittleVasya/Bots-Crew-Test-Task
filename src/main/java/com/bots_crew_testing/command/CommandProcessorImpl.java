@@ -1,8 +1,9 @@
 package com.bots_crew_testing.command;
 
-import com.bots_crew_testing.exception.ParsingException;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CommandProcessorImpl implements CommandProcessor {
 
   private final Map<String, Command> commands;
@@ -16,22 +17,23 @@ public class CommandProcessorImpl implements CommandProcessor {
     for (final var commandKey:commands.keySet()) {
       final var commandSplitted = commandString.split(commandKey);
       if (validateSplittedCommand(commandSplitted, commandString)) {
+        log.info(String.format("Processing command type of \"%s\"", commandKey));
         commandString = commandSplitted[1];
-
         for (final var promptKey:commands.get(commandKey).getPrompts().keySet()) {
           final var promptSplitted = commandString.split(promptKey);
           if (validateSplittedCommand(promptSplitted, commandString)) {
             if (promptSplitted.length == 1) {
+              log.info(String.format("Processing command type of \"%s\" with prompt \"%s\"", commandKey, promptKey));
               System.out.println(commands.get(commandKey).getPrompts().get(promptKey).handle(promptSplitted[0].strip()));
             }
             else {
+              log.info(String.format("Processing command type of \"%s\" with prompt \"%s\"", commandKey, promptKey));
               System.out.println(commands.get(commandKey).getPrompts().get(promptKey).handle(promptSplitted[1].strip()));
             }
           }
         }
       }
     }
-    throw new ParsingException("Unknown command, list of available commands + \n" + commands.keySet());
   }
 
   private boolean validateSplittedCommand(String[] command, String originalCommand) {
@@ -41,6 +43,6 @@ public class CommandProcessorImpl implements CommandProcessor {
     else if (command.length == 2 && !command[1].equals(originalCommand)) {
       return true;
     }
-    throw new ParsingException("Unknown command, list of available commands + \n" + commands.keySet());
+    return false;
   }
 }

@@ -1,5 +1,7 @@
 package com.bots_crew_testing.service.impl;
 
+import static com.bots_crew_testing.entity.Degree.*;
+
 import com.bots_crew_testing.entity.Degree;
 import com.bots_crew_testing.entity.Department;
 import com.bots_crew_testing.entity.Lector;
@@ -9,6 +11,7 @@ import com.bots_crew_testing.exception.NotFoundException;
 import com.bots_crew_testing.service.DepartmentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DepartmentServiceImpl implements DepartmentService {
 
   private final DepartmentRepository departmentRepository;
@@ -24,34 +28,29 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   public String getHeadOfDepartment(String departmentName) {
-
+    log.info(String.format("Searching department \"%s\"", departmentName));
     final var department = departmentRepository.findDepartmentByName(departmentName);
 
-    return department.map(dep -> String.format("Head of %s department is %s", departmentName,
+    return department.map(dep -> String.format("Head of \"%s\" department is \"%s\"", departmentName,
         dep.getHeadOfDepartment().getFullName())).orElseThrow(
-        () -> new NotFoundException(String.format("Department %s not found", departmentName)));
+        () -> new NotFoundException(String.format("Department \"%s\" not found", departmentName)));
 
   }
 
   @Override
   public String showEmployeeStatistics(String departmentName) {
+    log.info(String.format("Searching department \"%s\"", departmentName));
     final var department = departmentRepository.findDepartmentByName(departmentName);
 
     if (department.isPresent()) {
       Department dep = department.get();
-      long assistantsCount = dep.getEmployees().stream()
-          .filter(lector -> lector.getDegree() == Degree.ASSISTANT)
-          .count();
+      long assistantsCount = countEmployeesByDegree(dep, ASSISTANT);
 
-      long associateProfessorsCount = dep.getEmployees().stream()
-          .filter(lector -> lector.getDegree() == Degree.ASSOCIATE_PROFESSOR)
-          .count();
+      long associateProfessorsCount = countEmployeesByDegree(dep, ASSOCIATE_PROFESSOR);
 
-      long professorsCount = dep.getEmployees().stream()
-          .filter(lector -> lector.getDegree() == Degree.PROFESSOR)
-          .count();
+      long professorsCount = countEmployeesByDegree(dep, PROFESSOR);
 
-      return String.format("Degrees count in the %s department:\n" +
+      return String.format("Degrees count in the \"%s\" department:\n" +
               "Assistants - %d\n" +
               "Associate Professors - %d\n" +
               "Professors - %d", departmentName, assistantsCount, associateProfessorsCount,
@@ -63,6 +62,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   public String getAverageSalary(String departmentName) {
+    log.info(String.format("Searching department \"%s\"", departmentName));
     final var department = departmentRepository.findDepartmentByName(departmentName);
 
     if (department.isPresent()) {
@@ -77,27 +77,29 @@ public class DepartmentServiceImpl implements DepartmentService {
           .average()
           .getAsDouble();
 
-      return String.format("The average salary of %s is %s", departmentName, average);
+      return String.format("The average salary of \"%s\" is \"%s\"", departmentName, average);
     } else {
-      throw new NotFoundException(String.format("Department %s not found", departmentName));
+      throw new NotFoundException(String.format("Department \"%s\" not found", departmentName));
     }
   }
 
   @Override
   public String getEmployeeCount(String departmentName) {
+    log.info(String.format("Searching department \"%s\"", departmentName));
     final var department = departmentRepository.findDepartmentByName(departmentName);
 
     if (department.isPresent()) {
       Department dep = department.get();
 
-      return String.format("The count of employees is %s", dep.getEmployees().size());
+      return String.format("The count of employees is \"%s\"", dep.getEmployees().size());
     } else {
-      throw new NotFoundException(String.format("Department %s not found", departmentName));
+      throw new NotFoundException(String.format("Department \"%s\" not found", departmentName));
     }
   }
 
   @Override
   public String globalSearch(String searchArgument) {
+    log.info(String.format("Searching entities with \"%s\"", searchArgument));
     List<Department> departments = departmentRepository.findByNameContaining(searchArgument);
     List<Lector> lectors = lectorRepository.findByFullNameContaining(searchArgument);
 
@@ -112,5 +114,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     return result.toString();
+  }
+
+  private long countEmployeesByDegree(Department department, Degree degree) {
+    return department.getEmployees().stream()
+        .filter(lector -> lector.getDegree() == degree)
+        .count();
   }
 }
